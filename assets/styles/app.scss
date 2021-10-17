@@ -1,0 +1,142 @@
+@import './variables';
+@import '~bootstrap/scss/bootstrap';
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+main {
+    flex: 1;
+}
+
+.btn {
+    background: unset;
+    color: unset;
+    border-color: unset;
+}
+
+
+.logo-qm {
+    height: 58px;
+    padding: 0 33px;
+}
+// Darken buttons
+@each $color, $value in $theme-colors {
+    .btn-#{$color} {
+        @include button-variant($value, $value, darken($value, 10%));
+    }
+}
+
+.navbar {
+    //border-shadow: ;
+    border-bottom: 1px solid rgba(150, 150, 150, 0.3);
+    //border-bottom: 1px solid #98a6ad;
+    box-shadow: 0 12px 10px -14px #111;
+
+}
+
+
+
+.navbar-brand-qm {
+    font-family: $font-family-title;
+    font-weight: $font-weight-normal;
+    font-size: 1.8rem;
+}
+
+.home-mode {
+    margin-top: 100px;
+}
+
+.search-box {
+
+    .search-icon {
+        position: absolute;
+        z-index: 9;
+        font-size: 22px;
+        line-height: $input-height-lg;
+        left: 10px;
+        top: 0;
+    }
+
+    #reset-search {
+        position: absolute;
+        z-index: 9;
+        font-size: 26px;
+        line-height: 40px;
+        right: 86px;
+        top: 0;
+    }
+
+    #search-pattern {
+        text-indent: 22px;
+        height: $input-height-lg;
+    }
+
+
+    button[type=submit] {
+        height: $input-height-lg;
+    }
+
+
+    #search-results {
+        th { color: $gray-900;}
+        td {
+            font-size: 16px;
+            color: $gray-900;
+            &.gender { text-indent: 12px; }
+        }
+    }
+
+}
+
+.home-mode {
+    #search-pattern {
+        width: 400px;
+        margin-top: 30px;
+    }
+}
+
+
+
+
+//.navbar-brand, .nav-link {
+//    transition: all .15s;
+//}
+//
+//.nav-conference {
+//    display: inline-block;
+//    padding: 5px 10px;
+//    color: #666;
+//    text-transform: uppercase;
+//    font-weight: bold;
+//    font-size: 0.8rem;
+//}
+//
+//.lift {
+//    transition: box-shadow .25s ease,transform .25s ease;
+//
+//    &:focus, &:hover {
+//        box-shadow: 0 1rem 2.5rem rgba(22,28,45,.1),0 .5rem 1rem -.75rem rgba(22,28,45,.1)!important;
+//        transform: translate3d(0, -4px, 0);
+//    }
+//}
+
+.comment-img {
+    width: 250px;
+    height: 150px;
+
+    img {
+        max-width: 250px;
+        max-height: 150px;
+    }
+}
+
+.comment-text {
+    font-size: 12px;
+    line-height: 15px;
+}
+
+footer {
+    background: #18171b;
+}

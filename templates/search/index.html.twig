@@ -1,0 +1,65 @@
+{#{% extends 'master.html.twig' %}#}
+{% extends 'base.html.twig' %}
+
+{% block title %}User fast search{% endblock %}
+
+{% block body %}
+
+<div class="d-flex justify-content-center">
+    <div class="search-box text-center home-mode">
+        <h1>User fast search</h1>
+
+
+
+        <div class="search-box">
+            <form
+                  action="{{ '' }}"
+                  method="post">
+{#                <input type="hidden" name="_csrf_token" value="{{ searchPatientCsrf }}" >#}
+
+                <div class="input-group">
+                    <input type="text" id="search-pattern" name="search-pattern"
+                           class="form-control"
+                           aria-label="Search ..."
+                           maxlength="50"
+                           placeholder="{{ 'Search a name or an email' }}"
+                    >
+
+                    <i class="fas fa-search search-icon"></i>
+
+                    <button type="button" class="close" id="reset-search">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-secondary">{{ 'Search' }}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
+
+{% block footer_scripts %}
+
+    <script type="text/javascript">
+        const search = new Search({
+            {#    form: "{{ csrf }}",#}
+            {#},#}
+            {#{#}
+            {#    save: "{{ url(constant('Ewave\\Controller\\Specialist\\Orthopaedist\\AnkleController::SAVE_ACTION')) }}",#}
+            {#    delete: "{{ url(constant('Ewave\\Controller\\Specialist\\Orthopaedist\\AnkleController::DELETE_ACTION')) }}",#}
+            {#    load: "{{ url(constant('Ewave\\Controller\\Specialist\\Orthopaedist\\AnkleController::LOAD_ACTION')) }}",#}
+            {#},{#}
+            {#    providerName: "{{ user('name') }}"#}
+            });
+
+        $(document).ready(() => {
+            search.init();
+        });
+    </script>
+
+{% endblock %}
