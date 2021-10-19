@@ -19,6 +19,7 @@ bsCustomFileInput.init();
 //
 // const $ = require('jquery');
 
+// import './js/ajax'
 // import './js/search'
 
 // // this "modifies" the jquery module: adding behavior to it

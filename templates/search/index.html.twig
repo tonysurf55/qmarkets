@@ -1,25 +1,21 @@
-{#{% extends 'master.html.twig' %}#}
 {% extends 'base.html.twig' %}
-
 {% block title %}User fast search{% endblock %}
+{% set csrf = csrf_token(constant('App\\Controller\\SearchController::CSRF_KEY')) %}
 
 {% block body %}
-
-<div class="d-flex justify-content-center">
-    <div class="search-box text-center home-mode">
-        <h1>User fast search</h1>
-
-
+<div class="search-container home-mode">
+    <div class="search-body">
+        <span class="page-title">User fast search</span>
 
         <div class="search-box">
-            <form
-                  action="{{ '' }}"
+            <form name="search-form"
+                  action="{{ url(constant('App\\Controller\\SearchController::SEARCH_ACTION')) }}"
                   method="post">
 {#                <input type="hidden" name="_csrf_token" value="{{ searchPatientCsrf }}" >#}
 
-                <div class="input-group">
-                    <input type="text" id="search-pattern" name="search-pattern"
-                           class="form-control"
+                <div class="input-group" id="search-input-group">
+                    <input type="text" id="search-pattern" name="searchPattern"
+                           class="form-control search-input"
                            aria-label="Search ..."
                            maxlength="50"
                            placeholder="{{ 'Search a name or an email' }}"
@@ -35,6 +31,7 @@
                         <button type="submit" class="btn btn-secondary">{{ 'Search' }}</button>
                     </div>
                 </div>
+                <div class="error" id="search-pattern-error"></div>
             </form>
         </div>
 
@@ -47,14 +44,10 @@
 
     <script type="text/javascript">
         const search = new Search({
-            {#    form: "{{ csrf }}",#}
-            {#},#}
-            {#{#}
-            {#    save: "{{ url(constant('Ewave\\Controller\\Specialist\\Orthopaedist\\AnkleController::SAVE_ACTION')) }}",#}
-            {#    delete: "{{ url(constant('Ewave\\Controller\\Specialist\\Orthopaedist\\AnkleController::DELETE_ACTION')) }}",#}
-            {#    load: "{{ url(constant('Ewave\\Controller\\Specialist\\Orthopaedist\\AnkleController::LOAD_ACTION')) }}",#}
-            {#},{#}
-            {#    providerName: "{{ user('name') }}"#}
+                form: "{{ csrf }}",
+            },
+            {
+                runIndex: "{{ url(constant('App\\Controller\\SearchController::RUN_INDEX_ACTION')) }}",
             });
 
         $(document).ready(() => {
