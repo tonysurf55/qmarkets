@@ -37,12 +37,48 @@ class UsersRepository extends ServiceEntityRepository
      *
      * @return array
      */
-    public function searchUsers(): array
+    public function searchUsers(string $pattern): array
     {
-        $query = '
-            select * from users 
-            limit 10
-        ';
+
+        $likeClause = '';
+        $keywords = explode(' ', $pattern);
+        foreach ($keywords as $key) {
+            if ($likeClause) {
+                $likeClause .= ' or ';
+            }
+            $likeClause .= "k.keyword like '{$key}%'";
+        }
+
+        $filterClause = '';
+
+//        $likeClause = "k.keyword like '{$}%' or k.keyword like 'cob%'";
+
+
+
+        $query = sprintf("
+        	SELECT 
+			u.uid, 
+			u.name, 
+			u.mail, 
+			p.full_name,
+			p.region,
+			p.department,
+			kk.score
+		FROM users u
+		left join profiles_view p on p.uid = u.uid
+		inner join (
+		select uid, score from keyword_scores ks 
+			inner join keywords k on k.id = ks.keyword_id 
+		and (%s) %s
+-- 		and ks.region_id in (1, 2, 3, 4)
+	) kk on kk.uid = u.uid
+		order by kk.score desc
+		limit 5", $likeClause, $filterClause);
+
+
+
+//        $this->dbService->
+
         return $this->dbService->prepare($query)
 //            ->bindParam('pattern', $searchPattern)
 //            ->bindValue('patternWild', "%$searchPattern%")

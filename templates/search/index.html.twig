@@ -3,15 +3,16 @@
 {% set csrf = csrf_token(constant('App\\Controller\\SearchController::CSRF_KEY')) %}
 
 {% block body %}
-<div class="search-container home-mode">
-    <div class="search-body">
-        <span class="page-title">User fast search</span>
+<div class="search-page">
 
-        <div class="search-box">
-            <form name="search-form"
-                  action="{{ url(constant('App\\Controller\\SearchController::SEARCH_ACTION')) }}"
-                  method="post">
-{#                <input type="hidden" name="_csrf_token" value="{{ searchPatientCsrf }}" >#}
+    <div class="search-container home-mode">
+        <div class="search-body">
+            <div class="d-flex">
+                <span class="page-title">User fast search</span>
+                <img class="loader-small" id="search-loader" src="/images/loader-small.gif">
+            </div>
+
+            <div class="search-box">
 
                 <div class="input-group" id="search-input-group">
                     <input type="text" id="search-pattern" name="searchPattern"
@@ -23,21 +24,81 @@
 
                     <i class="fas fa-search search-icon"></i>
 
-                    <button type="button" class="close" id="reset-search">
+                    <button type="button" class="close btn-no-outline" id="reset-search">
                         <i class="fas fa-times"></i>
                     </button>
 
                     <div class="input-group-append">
-                        <button type="submit" class="btn btn-secondary">{{ 'Search' }}</button>
+                        <button type="button" id="search-button" class="btn btn-secondary btn-no-outline">{{ 'Search' }}</button>
                     </div>
                 </div>
-                <div class="error" id="search-pattern-error"></div>
-            </form>
+
+                <div id="search-pattern-error" class="d-none error"><label class="error" for="search-pattern" style="display: inline-block;">Please enter at least 2 characters.</label></div>
+{#                    <div class="error" id="search-pattern-error"></div>#}
+            </div>
+
+            <div class="search-filter-box">
+
+                {# Regions filter #}
+                <div class="accordion" id="regions-box">
+                    <div class="card">
+                        <div class="card-header" id="regions-box-label">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#regions-box-content" aria-expanded="false" aria-controls="regions-box-content">
+                                Regions
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                        </div>
+
+                        <div id="regions-box-content" class="collapse" aria-labelledby="regions-box-label" data-parent="#regions-box">
+                            <div class="card-body">
+                                {% for region in regions %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="{{ region.id }}" name="regions[]" id="region-{{ region.id }}">
+                                        <label class="form-check-label" for="region-{{ region.id }}">
+                                            {{ region.name }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Departments filter #}
+                <div class="accordion ml-4" id="departments-box">
+                    <div class="card">
+                        <div class="card-header" id="departments-box-label">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#departments-box-content" aria-expanded="false" aria-controls="departments-box-content">
+                                Departments
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                        </div>
+
+                        <div id="departments-box-content" class="collapse" aria-labelledby="departments-box-label" data-parent="#departments-box">
+                            <div class="card-body">
+                                {% for department in departments %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="{{ department.id }}" name="departments[]" id="department-{{ department.id }}">
+                                        <label class="form-check-label" for="department-{{ department.id }}">
+                                            {{ department.name }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
         </div>
 
+        <div id="search-result"></div>
 
     </div>
 </div>
+
 {% endblock %}
 
 {% block footer_scripts %}
@@ -47,6 +108,7 @@
                 form: "{{ csrf }}",
             },
             {
+                search: "{{ url(constant('App\\Controller\\SearchController::SEARCH_ACTION')) }}",
                 runIndex: "{{ url(constant('App\\Controller\\SearchController::RUN_INDEX_ACTION')) }}",
             });
 

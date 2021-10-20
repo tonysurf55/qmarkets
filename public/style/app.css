@@ -48,8 +48,15 @@ footer {
 .spinner-load { width: 250px; }
 .spinner-load .img-loading { width: 250px; }
 
+.loader-small {
+    margin-left: 30px;
+    width: 45px;
+    display: none;
+}
 /**********************/
-
+.search-page {
+    position: relative;
+}
 
 .search-box {
     max-width: 560px;
@@ -97,6 +104,10 @@ footer {
     color: rgba(150, 150, 150, 0.6);
 }
 
+button.btn-no-outline:focus {
+    outline: none;
+}
+
 .search-box button[type=submit] {
     height: 41px;
 }
@@ -107,5 +118,66 @@ footer {
     background-color: #fff;
     border-color: #6c757d;
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgb(108 117 125 / 20%);
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.2);
+}
+
+@media screen and (max-width: 1060px) {
+    .search-filter-box {
+        display: none;
+    }
+}
+
+.search-filter-box {
+    display: flex;
+    text-align: left;
+}
+
+.search-filter-box .accordion {
+    width: 214px;
+}
+
+.search-filter-box .card {
+    border: none;
+}
+
+
+/*.search-filter-box .accordion .card:first-of-type {*/
+/*    border: 1px solid rgba(0,0,0,.125);*/
+/*}*/
+
+/*.search-filter-box .card-header:first-child { border-radius: 0; }*/
+.search-filter-box .card-header { border-radius: 0; border: none; }
+
+.search-filter-box .card-header {
+    height: 40px;
+    padding: 0;
+    background: none;
+}
+
+.card-header .fas {
+    transition: .4s transform ease-in-out;
+    margin-left: 7px;
+}
+.card-header .collapsed .fas {
+    transform: rotate(180deg);
+}
+
+
+.search-filter-box .card-header .btn-link {
+    color: #727070;
+    text-decoration: none;
+}
+
+.search-filter-box .card-body {
+    border: 1px solid rgba(0,0,0,.125);
+    overflow-y: auto;
+    height: 168px;
+    font-size: 0.9rem;
+}
+
+.search-filter-box .form-check-input {
+    background: #868e96;
+}
+.search-filter-box .form-check-input:checked {
+background: #868e96;
 }

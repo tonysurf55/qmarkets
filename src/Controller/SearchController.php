@@ -1,13 +1,14 @@
 <?php
 namespace App\Controller;
 
-use App\Entity\Users;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use App\Entity\Users;
+use App\Entity\Regions;
+use App\Entity\Departments;
 use App\DataObjects\ResponseDTO;
-use App\Controller\BaseController;
 
 class SearchController extends BaseController
 {
@@ -21,7 +22,10 @@ class SearchController extends BaseController
     #[Route('/', name: self::INDEX_ACTION)]
     public function index()
     {
-        return $this->render('search/index.html.twig');
+        return $this->render('search/index.html.twig', [
+            'regions' => $this->getRegions(),
+            'departments' => $this->getDepartments()
+        ]);
     }
 
     /**
@@ -38,11 +42,13 @@ class SearchController extends BaseController
             return $errorResponse;
         }
 
+        $pattern = $request->get('pattern');
+
         try {
             /** @var Users $user */
             $user = $this->getDoctrine()
                 ->getRepository(Users::class)
-                ->searchUsers();
+                ->searchUsers($pattern);
 //                ->findBy(['uid' => 1]);
         }
         catch(\Exception $ex) {
@@ -51,7 +57,7 @@ class SearchController extends BaseController
 
         return (new ResponseDTO())
             ->addParam('pattern', $request->get('pattern'))
-            ->addParam('user', $user)
+            ->addParam('users', $user)
             ->response();
     }
 
@@ -85,5 +91,43 @@ class SearchController extends BaseController
 //            ->addParam('pattern', $request->get('pattern'))
 //            ->addParam('user', $user)
             ->response();
+    }
+
+    /**
+     * Get the list of regions
+     * @return array
+     */
+    private function getRegions(): array
+    {
+        try {
+            /** @var Regions[] $regions */
+            $regions = $this->getDoctrine()
+                ->getRepository(Regions::class)
+                ->findAll();
+        }
+        catch(\Exception $ex) {
+            return [];
+        }
+
+        return $regions;
+    }
+
+    /**
+     * Get the list of regions
+     * @return array
+     */
+    private function getDepartments(): array
+    {
+        try {
+            /** @var Departments[] $departments */
+            $departments = $this->getDoctrine()
+                ->getRepository(Departments::class)
+                ->findAll();
+        }
+        catch(\Exception $ex) {
+            return [];
+        }
+
+        return $departments;
     }
 }

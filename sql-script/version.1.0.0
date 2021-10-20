@@ -598,7 +598,7 @@ DELIMITER ;
 --
 -- Procedure : Save the keyword scores
 --
-DROP PROCEDURE `save_keyword_scores`;
+DROP PROCEDURE if exists `save_keyword_scores`;
 DELIMITER $$
 CREATE PROCEDURE `save_keyword_scores`(keyword_id INT, uid INT, points INT, region_id int, department_id int)
 begin
@@ -618,9 +618,9 @@ DELIMITER ;
 --
 -- Procedure : Split a field and save its keywords
 --    
-DROP PROCEDURE `save_field_keyword`;
+DROP PROCEDURE if exists `save_field_keywords`;
 DELIMITER $$
-CREATE PROCEDURE `save_field_keyword`(uid int, content text, split_separator text, points int, region_id int, department_id int)
+CREATE PROCEDURE `save_field_keywords`(uid int, content text, split_separator text, points int, region_id int, department_id int)
 begin
 	DECLARE loop_counter INT;
 	DECLARE split_count INT;
@@ -636,7 +636,7 @@ begin
 		set item = SUBSTRING_INDEX(SUBSTRING_INDEX(content, split_separator, loop_counter + 1), split_separator, -1);
 		set item = TRIM(LOWER(item));
 
-		if item != '' then
+		if LENGTH(item) > 1 then
 			select save_keyword(item) into item_id;
 			call save_keyword_scores(item_id, uid, points, region_id, department_id);
 		end if;
@@ -649,7 +649,7 @@ DELIMITER ;
 --
 -- Main procedure : Get the users and generate the keywords
 --
-DROP PROCEDURE `generate_keywords`;
+DROP PROCEDURE if exists `generate_keywords`;
 DELIMITER $$
 CREATE PROCEDURE `generate_keywords`()
 begin
@@ -699,11 +699,11 @@ begin
 				select r.`id` into region_id from regions r where r.`name` = region; 
 				select d.`id` into department_id from departments d where d.`name` = department; 
 		
-				call save_field_keyword(uid, full_name, ' ', fullname_points, region_id, department_id);
-				call save_field_keyword(uid, name, '_', username_points, region_id, department_id);
+				call save_field_keywords(uid, full_name, ' ', fullname_points, region_id, department_id);
+				call save_field_keywords(uid, name, '_', username_points, region_id, department_id);
 		
 				select SUBSTRING_INDEX(SUBSTRING_INDEX(mail, '@', 1), '@', -1) into mail_begin;
-				call save_field_keyword(uid, mail_begin, '.', email_points, region_id, department_id);
+				call save_field_keywords(uid, mail_begin, '.', email_points, region_id, department_id);
 	
 		until user_loop_counter END REPEAT;
 	
