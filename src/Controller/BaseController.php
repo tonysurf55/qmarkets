@@ -14,10 +14,10 @@ class BaseController extends AbstractController
     /**
      * Validates the posted token and returns a response accordingly.
      *
-     * @param string $key    : The key of the CSRF session to validate against.
-     * @param string $token  : The posted token to validate.
+     * @param string $key : The key of the CSRF session to validate against.
+     * @param string|null $token : The posted token to validate.
      * @param int $errorCode : The error code to add to the response.
-     * @param bool $isAjax   : Indicates whether to retrieve a json response or not.
+     * @param bool $isAjax : Indicates whether to retrieve a json response or not.
      *
      * @param string|null $redirectRoute
      *

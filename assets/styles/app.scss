@@ -16,7 +16,6 @@ main {
     border-color: unset;
 }
 
-
 .logo-qm {
     height: 58px;
     padding: 0 33px;
@@ -46,15 +45,7 @@ footer {
     background: #18171b;
 }
 
-// Darken buttons
-@each $color, $value in $theme-colors {
-    .btn-#{$color} {
-        @include button-variant($value, $value, darken($value, 10%));
-    }
-}
-
 /**********************/
-
 
 .search-box {
     max-width: 560px;
@@ -69,14 +60,12 @@ footer {
     justify-content: center;
 }
 
-
 .search-box .search-input {
     width: 400px;
     text-indent: 27px;
     height: 41px;
 }
 .search-body .search-box { margin-top: 20px; }
-
 
 .home-mode .page-title { font-size: 2.5rem; }
 .home-mode .search-body { text-align: center; }
@@ -105,7 +94,6 @@ footer {
 .search-box button[type=submit] {
     height: 41px;
 }
-
 
 .form-control:focus {
     color: #495057;

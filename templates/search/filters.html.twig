@@ -1,0 +1,87 @@
+<div class="search-filter-box">
+
+    {# Regions filter #}
+    <div class="accordion" id="regions-box">
+        <div class="card">
+            <div class="card-header" id="regions-box-label">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#regions-box-content" aria-expanded="false" aria-controls="regions-box-content">
+                    Regions
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+
+            <div id="regions-box-content" class="collapse" aria-labelledby="regions-box-label" data-parent="#regions-box">
+                <div class="card-body">
+
+                    <button type="button"
+                        id="reset-region-filter"
+                        class="btn btn-link reset-filter"
+                        data-type="region"
+                    >
+                        reset
+                    </button>
+
+                    {% for region in regions %}
+                        <div class="form-check">
+                            <input type="checkbox"
+                                class="form-check-input region-filter"
+                                value="{{ region.id }}"
+                                name="regions[]"
+                                id="region-{{ region.id }}"
+                                data-id="{{ region.id }}"
+                                data-type="region"
+                            >
+                            <label class="form-check-label" for="region-{{ region.id }}">
+                                {{ region.name }}
+                            </label>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Departments filter #}
+    <div class="accordion ml-4" id="departments-box">
+        <div class="card">
+            <div class="card-header" id="departments-box-label">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#departments-box-content" aria-expanded="false" aria-controls="departments-box-content">
+                    Departments
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+
+            <div id="departments-box-content" class="collapse" aria-labelledby="departments-box-label" data-parent="#departments-box">
+                <div class="card-body">
+
+                    <button type="button"
+                            id="reset-department-filter"
+                            class="btn btn-link reset-filter"
+                            data-type="department"
+                    >
+                        reset
+                    </button>
+
+                    {% for department in departments %}
+                        <div class="form-check">
+                            <input type="checkbox"
+                               class="form-check-input department-filter"
+                               value="{{ department.id }}"
+                               name="departments[]"
+                               id="department-{{ department.id }}"
+                               data-id="{{ department.id }}"
+                               data-type="department"
+                            >
+                            <label class="form-check-label" for="department-{{ department.id }}">
+                                {{ department.name }}
+                            </label>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

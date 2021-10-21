@@ -18,7 +18,8 @@ class SearchController extends BaseController
     const RUN_INDEX_ACTION = 'app_search_run_index';
 
     /**
-    */
+     * Load the Search page
+     */
     #[Route('/', name: self::INDEX_ACTION)]
     public function index()
     {
@@ -29,7 +30,7 @@ class SearchController extends BaseController
     }
 
     /**
-     * Saves the posted data.
+     * Search action.
      *
      * @param Request $request
      *
@@ -43,13 +44,14 @@ class SearchController extends BaseController
         }
 
         $pattern = $request->get('pattern');
+        $filter_region = $request->get('region') ?? null;
+        $filter_department = $request->get('department') ?? null;
 
         try {
             /** @var Users $user */
             $user = $this->getDoctrine()
                 ->getRepository(Users::class)
-                ->searchUsers($pattern);
-//                ->findBy(['uid' => 1]);
+                ->searchUsers($pattern, $filter_region, $filter_department);
         }
         catch(\Exception $ex) {
             return $this->handleError(ex: $ex);
@@ -61,9 +63,8 @@ class SearchController extends BaseController
             ->response();
     }
 
-
     /**
-     * Saves the posted data.
+     * Run the stored procedure which create the keywords and scores tables.
      *
      * @param Request $request
      *
@@ -76,21 +77,16 @@ class SearchController extends BaseController
             return $errorResponse;
         }
 
-//        try {
-//            /** @var Users $user */
-//            $user = $this->getDoctrine()
-//                ->getRepository(Users::class)
-//                ->searchUsers();
-////                ->findBy(['uid' => 1]);
-//        }
-//        catch(\Exception $ex) {
-//            return $this->handleError(ex: $ex);
-//        }
+        try {
+            $this->getDoctrine()
+                ->getRepository(Users::class)
+                ->runIndex();
+        }
+        catch(\Exception $ex) {
+            return $this->handleError(ex: $ex);
+        }
 
-        return (new ResponseDTO())
-//            ->addParam('pattern', $request->get('pattern'))
-//            ->addParam('user', $user)
-            ->response();
+        return (new ResponseDTO())->response();
     }
 
     /**

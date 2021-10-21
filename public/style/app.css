@@ -43,8 +43,6 @@ footer {
 }
 
 .error label { margin-top: 15px; }
-
-
 .spinner-load { width: 250px; }
 .spinner-load .img-loading { width: 250px; }
 
@@ -53,7 +51,12 @@ footer {
     width: 45px;
     display: none;
 }
+
+.btn-link { color: #727070; }
+.btn-link:hover { color: rgba(114, 112, 112, 0.6); }
+
 /**********************/
+
 .search-page {
     position: relative;
 }
@@ -70,7 +73,6 @@ footer {
     display: flex;
     justify-content: center;
 }
-
 
 .search-box .search-input {
     width: 400px;
@@ -140,12 +142,6 @@ button.btn-no-outline:focus {
     border: none;
 }
 
-
-/*.search-filter-box .accordion .card:first-of-type {*/
-/*    border: 1px solid rgba(0,0,0,.125);*/
-/*}*/
-
-/*.search-filter-box .card-header:first-child { border-radius: 0; }*/
 .search-filter-box .card-header { border-radius: 0; border: none; }
 
 .search-filter-box .card-header {
@@ -162,13 +158,13 @@ button.btn-no-outline:focus {
     transform: rotate(180deg);
 }
 
-
 .search-filter-box .card-header .btn-link {
     color: #727070;
     text-decoration: none;
 }
 
 .search-filter-box .card-body {
+    position: relative;
     border: 1px solid rgba(0,0,0,.125);
     overflow-y: auto;
     height: 168px;
@@ -180,4 +176,12 @@ button.btn-no-outline:focus {
 }
 .search-filter-box .form-check-input:checked {
 background: #868e96;
+}
+
+.reset-filter {
+    position: absolute;
+    padding: 0;
+    top: 0;
+    right: 8px;
+    /*cursor: pointer;*/
 }

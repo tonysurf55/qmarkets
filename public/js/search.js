@@ -1,113 +1,124 @@
+/**
+ * Search page
+ */
 class Search
 {
+    /**
+     * Creates an instance of the class.
+     *
+     * @param tokens
+     * @param urls
+     */
     constructor(tokens, urls) {
-        this.tokens = tokens;
         this.urls = urls;
-        this.form = 'form[name=search-form]';
+        this.tokens = tokens;
         this.searchId = '#search-pattern';
-        this.errorId = '#search-pattern-error';
-        this.runIndexBtn = '#run-search-index';
+        this.form = 'form[name=search-form]';
         this.resetSearchBtn = '#reset-search';
-        this.searchResultId = '#search-result';
+        this.runIndexBtn = '#run-search-index';
         this.searchButtonId = '#search-button';
-
+        this.searchResultId = '#search-result';
+        this.resetFilterButton = '.reset-filter';
+        this.searchNoResultId = '#search-no-result';
+        this.errorSearchEmpty = '#search-empty-error';
+        this.errorSearchMinLength = '#search-min-error';
+        this.searchResultTableId = '#search-results-table';
+        this.filterSelector = '.region-filter, .department-filter';
     }
 
+    /**
+     * Init the elements on the page after the DOM is loaded.
+     */
     init() {
-        // const options = {
-        //     focusInvalid: false,
-        //     errorPlacement: (($error, $element) => {
-        //         $(this.errorId).append($error);
-        //     }),
-        //
-        //     rules: {
-        //         searchPattern: {
-        //             required: true,
-        //             minlength: 2
-        //         }
-        //     },
-        //     messages: {
-        //         searchPattern: {required: 'Please enter your search.'}
-        //     },
-        //     submitHandler: (form, event) => {
-        //         event.preventDefault();
-        //         return this.search();
-        //     },
-        // };
-
-        /** Init the search form */
-        // $(this.form).validate(options);
         /** Init the "Run search index" button */
         $(this.runIndexBtn).click(() => this.runIndex());
+        this.initSearchField();
+        this.initSearchButton();
+        this.initFilters();
+    }
 
+    /**
+     * Init the search filed
+     */
+    initSearchField() {
         const debounceOptions = {
             'leading': false,
             'trailing': true
         };
+
         $(this.searchId).keyup(_.debounce(this.search, 250, debounceOptions));
-        // $(this.searchId).keyup(this.debounceSearch);
+        $(this.searchId).focus();
 
         $(this.resetSearchBtn).click(() => {
             $(this.searchId).val('');
             this.setHomeMode(true);
         })
+    }
 
-        $(this.searchId).focus();
-
+    /**
+     * Init the search button
+     */
+    initSearchButton() {
         $(this.searchButtonId).click(() => {
             const pattern = $(this.searchId).val();
             if (!pattern) {
+                $(this.errorSearchEmpty).removeClass('d-none');
                 return;
             }
-
-            if (pattern && pattern.length < 2) {
-                $(this.errorId).removeClass('d-none');
+            
+            if (pattern.length < 2) {
+                $(this.errorSearchMinLength).removeClass('d-none');
                 return;
             }
 
             this.search();
         });
-
-
-        // $(this.listTableId).bootstrapTable({
-        //     formatNoMatches: () => {
-        //         return $.i18n('No data to show');
-        //     },
-        //     formatLoadingMessage: () => {
-        //         return "";
-        //     },
-        //     onClickRow: (row, $element, field) => {
-        //         if (field !== 'id') {
-        //             this.loadEntity(row.id).then(r => {});
-        //         }
-        //     }
-        // });
     }
 
     /**
+     * Init the region and department filter
+     */
+    initFilters() {
+        // Add filter
+        $(this.filterSelector).change(this.search);
+
+        // Reset filter
+        $(this.resetFilterButton).click((event) => {
+            const $button = $(`#${event.target.id}`);
+            const type = $button.attr('data-type');
+            $(`.${type}-filter`).prop("checked", false);
+            this.search();
+        });
+    }
+
+    /**
+     * Switch the screen view
      *
-     * @param isHomeView
+     * @param isHomeView: when true, display the fields on the center of the screen
      */
     setHomeMode(isHomeView = false) {
        if (isHomeView) {
            $('.search-container').addClass('home-mode');
+           $(this.searchResultId).addClass('d-none');
        } else {
            $('.search-container').removeClass('home-mode');
        }
+
+        // Hide the errors and the "no result" message
+        $(this.errorSearchEmpty).addClass('d-none');
+        $(this.errorSearchMinLength).addClass('d-none');
+        $(this.searchNoResultId).addClass('d-none');
     }
 
     /**
+     * Search for a pattern
      *
-
      * @return {Promise<void>}
      */
     search = () => {
-        $(this.errorId).addClass('d-none');
-
         let pattern = $(this.searchId).val();
 
         if (!pattern || pattern.length < 2) {
-            $(this.searchResultId).html('');
             this.setHomeMode(true);
             return;
         }
@@ -118,45 +129,69 @@ class Search
 
         const data = {
             pattern: pattern.toLowerCase(),
-            token: this.tokens.form
+            token: this.tokens.form,
+            ...this.getFilters()
         };
 
         ajax.post(this.urls.search, data, false, true)
             .then(response => {
-                const users = response.params.users ?? null;
-                if (!users || users.length === 0) {
-                    $(this.searchResultId).html('No result found.');
-                    return;
-                }
-
-                let results = '';
-                users.forEach((user) => {
-                    results += '' +
-                        '<div class="result-item">' +
-                        `${user.full_name} ${user.mail} ${user.name} ${user.region} ${user.department}` +
-                        '</div>';
-                })
-
-                $(this.searchResultId).html(results);
-                console.log(response);
+                this.showSearchResults(response.params.users ?? null);
             })
-            .finally(() => {
-                $loader.hide();
-            });
+            .finally(() => { $loader.hide(); });
+    }
+
+    /**
+     * Display the search results
+     * @param results
+     */
+    showSearchResults(results) {
+        if (!results || results.length === 0) {
+            $(this.searchNoResultId).removeClass('d-none');
+            $(this.searchResultId).addClass('d-none');
+            return;
+        }
+
+        $(this.searchResultTableId).bootstrapTable('removeAll')
+        $(this.searchResultTableId).bootstrapTable('append', results);
+        $(this.searchResultId).removeClass('d-none');
+    }
+
+    /**
+     * Get the selected regions and departments
+     *
+     * @return {{region: *[], department: *[]}}
+     */
+    getFilters() {
+        const filters = { region: [], department: [] };
+
+        $(this.filterSelector).each((index, element) => {
+            const $filter = $(element);
+            if (!$filter.is(':checked')) {
+                return;
+            }
+
+            const id = $filter.attr('data-id');
+            const type = $filter.attr('data-type');
+            filters[type].push(id);
+        });
+
+        return filters;
     }
 
     /**
      * Init the "Run search index" button
+     * Run the stored procedure which create the keywords and scores tables.
      */
     async runIndex() {
-        const data = {
-            token: this.tokens.form
-        };
+        await ajax.post(this.urls.runIndex, { token: this.tokens.form })
+            .then(() => {
+                // Reset the page display
+                $(this.searchId).val('');
+                this.setHomeMode(true);
 
-        await ajax.post(this.urls.runIndex, data)
-            .then(response => {
-                console.log(response);
+                // Close the filters
+                $('#regions-box-content').collapse('hide');
+                $('#departments-box-content').collapse('hide');
             });
     }
-
 }

@@ -653,7 +653,7 @@ DROP PROCEDURE if exists `generate_keywords`;
 DELIMITER $$
 CREATE PROCEDURE `generate_keywords`()
 begin
-	DECLARE user_loop_counter INT;
+	DECLARE exit_loop BOOLEAN;
 	DECLARE mail_begin TEXT;
 	DECLARE username_points INT;
 	DECLARE email_points INT;
@@ -667,6 +667,7 @@ begin
 	DECLARE full_name TEXT;
 	DECLARE region TEXT;
 	DECLARE department TEXT;
+
 	DECLARE users_curs CURSOR FOR  
 		SELECT 
 			u.uid, 
@@ -678,7 +679,7 @@ begin
 		FROM users u
 		left join profiles_view p on p.uid = u.uid;
 
-	DECLARE CONTINUE HANDLER FOR NOT FOUND SET user_loop_counter = 1;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET exit_loop = true;
 
 	SET username_points = 1;
 	SET email_points = 2;
@@ -690,24 +691,23 @@ begin
 	SET FOREIGN_KEY_CHECKS = 1;
 
 	OPEN users_curs;
-	 	SET user_loop_counter = 0;
-		
-	 	repeat
-	
-			FETCH users_curs INTO uid, name, mail, full_name, region, department;
-	
-				select r.`id` into region_id from regions r where r.`name` = region; 
-				select d.`id` into department_id from departments d where d.`name` = department; 
-		
-				call save_field_keywords(uid, full_name, ' ', fullname_points, region_id, department_id);
-				call save_field_keywords(uid, name, '_', username_points, region_id, department_id);
-		
-				select SUBSTRING_INDEX(SUBSTRING_INDEX(mail, '@', 1), '@', -1) into mail_begin;
-				call save_field_keywords(uid, mail_begin, '.', email_points, region_id, department_id);
-	
-		until user_loop_counter END REPEAT;
-	
-	CLOSE users_curs;
+	user_loop: LOOP
+		FETCH users_curs INTO uid, name, mail, full_name, region, department;		
+	    
+		IF exit_loop THEN
+	    	CLOSE users_curs;
+	        LEAVE user_loop;
+	    END IF;
+
+		select r.`id` into region_id from regions r where r.`name` = region; 
+		select d.`id` into department_id from departments d where d.`name` = department; 
+
+		call save_field_keywords(uid, full_name, ' ', fullname_points, region_id, department_id);
+		call save_field_keywords(uid, name, '_', username_points, region_id, department_id);
+
+		select SUBSTRING_INDEX(SUBSTRING_INDEX(mail, '@', 1), '@', -1) into mail_begin;
+		call save_field_keywords(uid, mail_begin, '.', email_points, region_id, department_id);
+	END LOOP user_loop;
 
 END$$
 DELIMITER ;
