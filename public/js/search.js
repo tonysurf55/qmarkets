@@ -65,7 +65,7 @@ class Search
                 $(this.errorSearchEmpty).removeClass('d-none');
                 return;
             }
-            
+
             if (pattern.length < 2) {
                 $(this.errorSearchMinLength).removeClass('d-none');
                 return;
