@@ -1,6 +1,6 @@
 # qmarkets
 
-## Steps to make it work
+***Steps to make it work***
 
 1. Setup
 --------
